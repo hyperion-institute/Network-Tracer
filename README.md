@@ -46,7 +46,7 @@ network-tracer/
 ├── public/
 │   └── index.html          # Frontend: form, hop table, Leaflet map
 ├── package.json
-├── .env.example
+├── LICENSE
 └── .gitignore
 ```
 
