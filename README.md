@@ -45,8 +45,8 @@ network-tracer/
 │   ├── traceroute.js       # Runs the system traceroute command and parses output
 │   └── geoip.js            # Looks up lat/lng + ISP for each hop's IP
 ├── LICENSE
-├── package.json
 ├── README.md
+├── package.json
 └── server.js               # Express app entry point
 ```
 
