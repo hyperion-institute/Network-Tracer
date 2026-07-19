@@ -1,8 +1,11 @@
-# Network Tracer
+<div align="center">
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:0f172a,100:1e293b&height=120&section=header&text=NETWORK%20TRACER&fontSize=32&fontColor=00ffcc&fontAlignY=55&desc=trace%20%7C%20geolocate%20%7C%20visualize&descAlignY=80&descSize=14&descColor=94a3b8" width="100%"/>
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&duration=3000&pause=1000&color=00FFCC&center=true&vCenter=true&width=600&lines=trace+the+path+your+traffic+takes;every+hop%2C+geolocated+and+mapped;built+with+Node.js+%2B+Leaflet.js" alt="Typing SVG" />
 
 ![status](https://img.shields.io/badge/status-active-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)
+</div>
 
 A small website that traces the network route to a domain or IP address and visualizes each hop on a map.
 
