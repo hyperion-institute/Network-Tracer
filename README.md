@@ -37,7 +37,6 @@ npm run dev
 
 ```
 network-tracer/
-            # Express app entry point
 ├── routes/
 │   └── trace.js            # POST /api/trace — validation, rate limiting, response
 ├── services/
@@ -48,7 +47,7 @@ network-tracer/
 ├── LICENSE
 ├── package.json
 ├── README.md
-└── server.js  
+└── server.js               # Express app entry point
 ```
 
 ## Notes on security
