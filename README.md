@@ -1,5 +1,9 @@
 # Network Tracer
 
+![status](https://img.shields.io/badge/status-active-brightgreen)
+![license](https://img.shields.io/badge/license-MIT-blue)
+![node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)
+
 A small website that traces the network route to a domain or IP address and visualizes each hop on a map.
 
 ## How it works
@@ -28,7 +32,6 @@ npm start
 Then open `http://localhost:3000` in your browser.
 
 For development with auto-restart on file changes:
-
 ```bash
 npm run dev
 ```
@@ -61,12 +64,15 @@ If you plan to deploy this publicly, consider adding:
 - A CAPTCHA on the form to deter automated abuse
 - A queue so only one traceroute runs at a time per server
 
-## Possible next steps
+## Roadmap
 
-- Stream hops to the frontend as they arrive (Server-Sent Events) instead of waiting for the full trace
-- Swap the free `ip-api.com` lookup for a local MaxMind GeoLite2 database (no rate limits, works offline)
-- Add ASN/BGP lookups for more network detail per hop
-- Dockerize for easier deployment (the container needs the `traceroute` package installed and, in some environments, the `NET_RAW` capability)
+- [x] Real traceroute + hop table
+- [x] GeoIP lookup per hop
+- [x] Map visualization
+- [ ] Stream hops to the frontend as they arrive (Server-Sent Events) instead of waiting for the full trace
+- [ ] Swap the free `ip-api.com` lookup for a local MaxMind GeoLite2 database (no rate limits, works offline)
+- [ ] Add ASN/BGP lookups for more network detail per hop
+- [ ] Dockerize for easier deployment (the container needs the `traceroute` package installed and, in some environments, the `NET_RAW` capability)
 
 ## License
 
