@@ -16,7 +16,7 @@ A small website that traces the network route to a domain or IP address and visu
 3. Each hop's IP is looked up via a free GeoIP API to get its approximate location.
 4. The frontend displays a table of hops and plots the route on a Leaflet map.
 
-> **Note: ** **Run this on the machine/network you actually want to trace from.** `traceroute` shows the path *from wherever the backend is running* — not a generic path to the target. Running it on your own computer traces your own connection. Deploying it to a VPS in another country traces from that VPS's network instead, which is a different (and equally valid) use case, but not "your" route anymore. This project is designed to be cloned and run locally by each person who wants to trace their own connection, rather than hosted as one shared public instance.
+> **Run this on the machine/network you actually want to trace from.** `traceroute` shows the path *from wherever the backend is running* — not a generic path to the target. Running it on your own computer traces your own connection. Deploying it to a VPS in another country traces from that VPS's network instead, which is a different (and equally valid) use case, but not "your" route anymore. This project is designed to be cloned and run locally by each person who wants to trace their own connection, rather than hosted as one shared public instance.
 
 ## Requirements
 
