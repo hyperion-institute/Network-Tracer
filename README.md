@@ -37,13 +37,13 @@ npm run dev
 
 ```
 network-tracer/
+├── public/
+│   └── index.html          # Frontend: form, hop table, Leaflet map
 ├── routes/
 │   └── trace.js            # POST /api/trace — validation, rate limiting, response
 ├── services/
 │   ├── traceroute.js       # Runs the system traceroute command and parses output
 │   └── geoip.js            # Looks up lat/lng + ISP for each hop's IP
-├── public/
-│   └── index.html          # Frontend: form, hop table, Leaflet map
 ├── LICENSE
 ├── package.json
 ├── README.md
