@@ -3,123 +3,248 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Network Tracer</title>
+<title>NETWORK://TRACER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {
-    --bg: #0f1115;
-    --panel: #161a22;
-    --border: #262b36;
-    --text: #e6e8ec;
-    --muted: #8b92a3;
-    --accent: #4f8cff;
-    --danger: #ff5c5c;
+    --void: #0a0a12;
+    --panel: #12121a;
+    --panel-border: #2a2a3d;
+    --pink: #ff2079;
+    --cyan: #05f7ff;
+    --yellow: #e8ff2e;
+    --text: #eef0f5;
+    --muted: #6b6f8a;
+    --clip: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
   }
+
   * { box-sizing: border-box; }
+
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
+    min-height: 100vh;
+    background: var(--void);
     color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+    overflow-x: hidden;
   }
+
+  /* ambient scanline / CRT texture — quiet, not distracting */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.015) 0px,
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 998;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+  }
+
   header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
+    padding: 28px 24px 18px;
+    border-bottom: 1px solid var(--panel-border);
+    position: relative;
   }
-  header h1 { margin: 0; font-size: 20px; }
-  header p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+  header h1 {
+    margin: 0;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: 3px;
+    color: var(--text);
+    text-shadow: 0 0 8px var(--pink), 0 0 22px rgba(255,32,121,0.35);
+  }
+  header p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
   main {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 20px 24px 40px;
+    gap: 18px;
+    padding: 22px 24px 48px;
     max-width: 1000px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
   }
 
-  form {
-    display: flex;
-    gap: 8px;
-  }
+  form { display: flex; gap: 10px; }
+
   input[type="text"] {
     flex: 1;
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
+    padding: 12px 14px;
     background: var(--panel);
+    border: 1px solid var(--panel-border);
+    clip-path: var(--clip);
     color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
   }
-  button {
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
+  input[type="text"]::placeholder { color: var(--muted); }
+  input[type="text"]:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px var(--cyan), 0 0 16px rgba(5,247,255,0.35);
   }
-  button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  #status { color: var(--muted); font-size: 14px; min-height: 20px; }
-  #status.error { color: var(--danger); }
+  button {
+    padding: 12px 22px;
+    background: var(--pink);
+    border: none;
+    clip-path: var(--clip);
+    color: #0a0a12;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: filter .15s, box-shadow .15s;
+  }
+  button:hover:not(:disabled) {
+    filter: brightness(1.15);
+    box-shadow: 0 0 18px rgba(255,32,121,0.55);
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+
+  #status {
+    font-size: 13px;
+    color: var(--muted);
+    min-height: 20px;
+    letter-spacing: 0.5px;
+  }
+  #status.error { color: var(--yellow); }
+  #status .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 13px;
+    background: var(--cyan);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
 
   #map {
     height: 360px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--panel-border);
+    clip-path: var(--clip);
+    filter: saturate(1.1);
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
+  /* animated "data flow" dash on the traced route line */
+  .leaflet-interactive.trace-route {
+    stroke-dasharray: 6 8;
+    animation: flow 1.2s linear infinite;
+  }
+  @keyframes flow { to { stroke-dashoffset: -28; } }
+
+  #log-panel {
+    border: 1px solid var(--panel-border);
+    clip-path: var(--clip);
     background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    font-size: 13px;
+    display: none;
   }
-  th, td {
-    text-align: left;
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--border);
+  #log-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--panel-border);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    text-transform: uppercase;
   }
-  th { color: var(--muted); font-weight: 600; }
-  tr:last-child td { border-bottom: none; }
-  .timeout { color: var(--muted); font-style: italic; }
+  #log-header span { color: var(--cyan); }
+
+  .hop-row {
+    display: grid;
+    grid-template-columns: 54px 130px 1fr 70px 1fr;
+    gap: 10px;
+    padding: 8px 16px;
+    font-size: 12.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    opacity: 0;
+    animation: reveal .25s ease-out forwards;
+  }
+  .hop-row:last-child { border-bottom: none; }
+  .hop-idx { color: var(--pink); }
+  .hop-ip { color: var(--text); }
+  .hop-rtt { color: var(--cyan); text-align: right; }
+  .hop-loc { color: var(--muted); }
+  .hop-row.timeout { color: var(--yellow); }
+  .hop-row.timeout .signal { animation: flicker 1.4s infinite; }
+
+  @keyframes reveal {
+    from { opacity: 0; transform: translateX(-4px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    45% { opacity: 1; }
+    50% { opacity: 0.35; }
+    55% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #status .cursor,
+    .hop-row.timeout .signal,
+    .leaflet-interactive.trace-route,
+    .hop-row { animation: none !important; opacity: 1 !important; }
+  }
+
+  @media (max-width: 600px) {
+    .hop-row { grid-template-columns: 34px 100px 1fr 55px; }
+    .hop-loc { display: none; }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Network Tracer</h1>
-  <p>Enter a domain or IP address to trace the route your traffic takes to reach it.</p>
+  <h1>NETWORK TRACER</h1>
+  <p>civilian-grade route tracing // observe the path your signal takes</p>
 </header>
 
 <main>
   <form id="trace-form">
-    <input type="text" id="target" placeholder="e.g. example.com or 8.8.8.8" required />
-    <button type="submit" id="submit-btn">Trace</button>
+    <input type="text" id="target" placeholder="target host — e.g. example.com" required />
+    <button type="submit" id="submit-btn">TRACE</button>
   </form>
 
-  <div id="status"></div>
+  <div id="status">STANDBY<span class="cursor"></span></div>
 
   <div id="map"></div>
 
-  <table id="hops-table" style="display:none;">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>IP</th>
-        <th>Hostname</th>
-        <th>RTT (ms)</th>
-        <th>Location</th>
-        <th>ISP / ASN</th>
-      </tr>
-    </thead>
-    <tbody id="hops-body"></tbody>
-  </table>
+  <div id="log-panel">
+    <div id="log-header"><span>// HOP LOG</span><span id="log-count"></span></div>
+    <div id="hops-body"></div>
+  </div>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -128,13 +253,15 @@
   const targetInput = document.getElementById('target');
   const submitBtn = document.getElementById('submit-btn');
   const statusEl = document.getElementById('status');
-  const table = document.getElementById('hops-table');
-  const tbody = document.getElementById('hops-body');
+  const logPanel = document.getElementById('log-panel');
+  const logCount = document.getElementById('log-count');
+  const hopsBody = document.getElementById('hops-body');
 
-  // Initialize the map, centered roughly on the world
-  const map = L.map('map').setView([20, 0], 2);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
+  const map = L.map('map', { zoomControl: true }).setView([20, 0], 2);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19,
   }).addTo(map);
 
   let markers = [];
@@ -143,56 +270,87 @@
   function clearMap() {
     markers.forEach((m) => map.removeLayer(m));
     markers = [];
-    if (routeLine) {
-      map.removeLayer(routeLine);
-      routeLine = null;
-    }
+    if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+  }
+
+  function neonIcon(color) {
+    return L.divIcon({
+      className: '',
+      html: `<div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 8px ${color},0 0 16px ${color};"></div>`,
+      iconSize: [10, 10],
+      iconAnchor: [5, 5],
+    });
   }
 
   function renderMap(hops) {
     clearMap();
     const points = [];
-
     hops.forEach((hop) => {
       if (hop.lat == null || hop.lng == null) return;
-      const marker = L.marker([hop.lat, hop.lng]).addTo(map);
+      const marker = L.marker([hop.lat, hop.lng], { icon: neonIcon('#05f7ff') }).addTo(map);
       marker.bindPopup(
-        `<b>Hop ${hop.hop}</b><br/>${hop.ip || 'unknown'}<br/>${hop.city || ''} ${hop.country || ''}<br/>${hop.isp || ''}`
+        `<b>HOP ${hop.hop}</b><br/>${hop.ip || 'unknown'}<br/>${hop.city || ''} ${hop.country || ''}<br/>${hop.isp || ''}`
       );
       markers.push(marker);
       points.push([hop.lat, hop.lng]);
     });
 
     if (points.length > 1) {
-      routeLine = L.polyline(points, { color: '#4f8cff', weight: 3 }).addTo(map);
+      routeLine = L.polyline(points, { color: '#ff2079', weight: 3, className: 'trace-route' }).addTo(map);
       map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
     } else if (points.length === 1) {
       map.setView(points[0], 6);
     }
   }
 
-  function renderTable(hops) {
-    tbody.innerHTML = '';
-    hops.forEach((hop) => {
-      const row = document.createElement('tr');
+  function renderLog(hops) {
+    hopsBody.innerHTML = '';
+    logCount.textContent = `${hops.length} HOPS`;
+    logPanel.style.display = 'block';
+
+    hops.forEach((hop, i) => {
+      const row = document.createElement('div');
+      row.className = 'hop-row' + (hop.timeout ? ' timeout' : '');
+      row.style.animationDelay = `${i * 45}ms`;
+      const idx = String(hop.hop).padStart(2, '0');
+
       if (hop.timeout) {
         row.innerHTML = `
-          <td>${hop.hop}</td>
-          <td colspan="5" class="timeout">* request timed out *</td>
+          <div class="hop-idx">//${idx}</div>
+          <div class="signal" style="grid-column: span 4;">[ SIGNAL LOST ]</div>
         `;
       } else {
+        const loc = [hop.city, hop.country].filter(Boolean).join(', ') || (hop.isp || '—');
         row.innerHTML = `
-          <td>${hop.hop}</td>
-          <td>${hop.ip || '-'}</td>
-          <td>${hop.hostname || '-'}</td>
-          <td>${hop.rtt ?? '-'}</td>
-          <td>${[hop.city, hop.country].filter(Boolean).join(', ') || '-'}</td>
-          <td>${hop.isp || '-'}</td>
+          <div class="hop-idx">//${idx}</div>
+          <div class="hop-ip">${hop.ip || '-'}</div>
+          <div class="hop-loc">${loc}</div>
+          <div class="hop-rtt">${hop.rtt != null ? hop.rtt + 'ms' : '-'}</div>
+          <div class="hop-loc">${hop.isp || ''}</div>
         `;
       }
-      tbody.appendChild(row);
+      hopsBody.appendChild(row);
     });
-    table.style.display = 'table';
+  }
+
+  function glitchStatus(text) {
+    statusEl.classList.remove('error');
+    const glitchChars = '!<>-_\\/[]{}—=+*^?#';
+    let frame = 0;
+    const finalText = text;
+    const iv = setInterval(() => {
+      frame++;
+      if (frame > 6) {
+        clearInterval(iv);
+        statusEl.innerHTML = `${finalText}<span class="cursor"></span>`;
+        return;
+      }
+      const scrambled = finalText
+        .split('')
+        .map((c) => (Math.random() > 0.6 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : c))
+        .join('');
+      statusEl.textContent = scrambled;
+    }, 40);
   }
 
   form.addEventListener('submit', async (e) => {
@@ -201,10 +359,9 @@
     if (!target) return;
 
     submitBtn.disabled = true;
-    statusEl.textContent = `Tracing route to ${target}...`;
-    statusEl.classList.remove('error');
-    table.style.display = 'none';
+    logPanel.style.display = 'none';
     clearMap();
+    glitchStatus(`TRACING ${target.toUpperCase()}...`);
 
     try {
       const res = await fetch('/api/trace', {
@@ -212,18 +369,14 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target }),
       });
-
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'trace failed');
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Something went wrong');
-      }
-
-      statusEl.textContent = `Done — ${data.hops.length} hop(s) to ${data.target}`;
-      renderTable(data.hops);
+      glitchStatus(`TRACE COMPLETE — ${data.hops.length} HOPS TO ${data.target.toUpperCase()}`);
+      renderLog(data.hops);
       renderMap(data.hops);
     } catch (err) {
-      statusEl.textContent = err.message;
+      statusEl.textContent = `[ ERROR ] ${err.message}`;
       statusEl.classList.add('error');
     } finally {
       submitBtn.disabled = false;
