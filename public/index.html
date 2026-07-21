@@ -420,7 +420,7 @@
       const row = document.createElement('div');
       row.className = 'hop-row' + (hop.timeout ? ' timeout' : '');
       row.style.animationDelay = `${i * 45}ms`;
-      const idx = '0x' + hop.hop.toString(16).toUpperCase().padStart(2, '0');
+      const idx = '//' + String(hop.hop).padStart(2, '0');
 
       if (hop.timeout) {
         row.innerHTML = `
