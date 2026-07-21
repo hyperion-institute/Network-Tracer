@@ -159,10 +159,14 @@
   }
   @keyframes blink { 50% { opacity: 0; } }
 
-  #map {
-    height: 360px;
-    border: 1px solid var(--panel-border);
+  #map-frame {
     clip-path: var(--clip);
+    background: var(--panel-border);
+    padding: 1px;
+  }
+  #map {
+    height: 358px;
+    clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
     filter: saturate(1.1);
   }
 
@@ -271,7 +275,7 @@
 
   <div id="status">STANDBY<span class="cursor"></span></div>
 
-  <div id="map"></div>
+  <div id="map-frame"><div id="map"></div></div>
 
   <div id="log-frame">
   <div id="log-panel">
