@@ -92,23 +92,31 @@
 
   form { display: flex; gap: 10px; }
 
-  input[type="text"] {
+  .input-frame {
     flex: 1;
+    clip-path: var(--clip);
+    background: var(--panel-border);
+    padding: 1px;
+    transition: background-color .15s, box-shadow .15s;
+  }
+  .input-frame:focus-within {
+    background: var(--cyan);
+    box-shadow: 0 0 16px rgba(5,247,255,0.35);
+  }
+
+  input[type="text"] {
+    display: block;
+    width: 100%;
     padding: 12px 14px;
     background: var(--panel);
-    border: 1px solid var(--panel-border);
-    clip-path: var(--clip);
+    border: none;
+    clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
     color: var(--text);
     font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
     outline: none;
-    transition: border-color .15s, box-shadow .15s;
   }
   input[type="text"]::placeholder { color: var(--muted); }
-  input[type="text"]:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 0 1px var(--cyan), 0 0 16px rgba(5,247,255,0.35);
-  }
 
   button {
     padding: 12px 22px;
@@ -165,11 +173,15 @@
   }
   @keyframes flow { to { stroke-dashoffset: -28; } }
 
-  #log-panel {
-    border: 1px solid var(--panel-border);
+  #log-frame {
     clip-path: var(--clip);
-    background: var(--panel);
+    background: var(--panel-border);
+    padding: 1px;
     display: none;
+  }
+  #log-panel {
+    clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+    background: var(--panel);
   }
   #log-header {
     display: flex;
@@ -253,7 +265,7 @@
 
 <main>
   <form id="trace-form" autocomplete="off">
-    <input type="text" id="target" placeholder="target host — e.g. example.com" autocomplete="off" required />
+    <div class="input-frame"><input type="text" id="target" placeholder="target host — e.g. example.com" autocomplete="off" required /></div>
     <button type="submit" id="submit-btn">TRACE</button>
   </form>
 
@@ -261,6 +273,7 @@
 
   <div id="map"></div>
 
+  <div id="log-frame">
   <div id="log-panel">
     <div id="log-header"><span>// HOP LOG</span><span id="log-count"></span></div>
     <div class="hop-columns">
@@ -272,6 +285,7 @@
     </div>
     <div id="hops-body"></div>
   </div>
+  </div>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -280,7 +294,7 @@
   const targetInput = document.getElementById('target');
   const submitBtn = document.getElementById('submit-btn');
   const statusEl = document.getElementById('status');
-  const logPanel = document.getElementById('log-panel');
+  const logPanel = document.getElementById('log-frame');
   const logCount = document.getElementById('log-count');
   const hopsBody = document.getElementById('hops-body');
 
