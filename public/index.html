@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-  /* Hallmark · pre-emit critique: P5 H4 E4 S4 R4 V4 */
   :root {
     --void: #0a0a12;
     --panel: #12121a;
@@ -35,7 +34,6 @@
     overflow-x: hidden;
   }
 
-  /* ambient scanline / CRT texture — quiet, not distracting */
   body::before {
     content: '';
     position: fixed;
@@ -194,7 +192,6 @@
     filter: saturate(1.1);
   }
 
-  /* animated "data flow" dash on the traced route line */
   .leaflet-interactive.trace-route {
     stroke-dasharray: 6 8;
     animation: flow 1.2s linear infinite;
@@ -359,8 +356,6 @@
     });
   }
 
-  // small marker that travels along the traced route, looping — visualizes
-  // an active packet moving hop-to-hop rather than a static line
   function animatePacket(points) {
     if (points.length < 2 || reducedMotion) return;
 
@@ -468,7 +463,7 @@
 
     submitBtn.disabled = true;
     submitBtn.classList.remove('sweep');
-    void submitBtn.offsetWidth; // restart animation
+    void submitBtn.offsetWidth;
     submitBtn.classList.add('sweep');
     logPanel.style.display = 'none';
     clearMap();
